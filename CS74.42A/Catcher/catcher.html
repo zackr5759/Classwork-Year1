@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Phaser CE Game Example</title>
+        <script src="phaser.min.js"></script>
+        <script>
+            var game;
+            var monster, vampire;
+            var cursorkeys;
+            var myscore = 0;
+            var scoreTextObject;
+
+            function load() {
+                game.load.image('monster', 'img/monster.png');
+                game.load.image('vampire', 'img/vampire.png');
+                game.load.image('bg','img/bg.png');
+            }
+            
+            function initialize() {
+                var myguy = game.add.sprite( 0, 0, 'bg');
+                console.log(myguy);
+              
+                scoreTextObject = game.add.text(
+                    10,
+                    10,
+                    myscore.toString(),
+                    {
+                        font: "20px Arial",
+                        fill: "red"
+                    }
+                );
+                
+                vampire = game.add.sprite( 400, 300, 'vampire' ); 
+                monster = game.add.sprite( 
+                    Math.random() * game.width,
+                    Math.random() * game.height,
+                    'monster'
+                );
+                game.physics.enable( vampire, Phaser.Physics.ARCADE );
+                game.physics.enable( monster, Phaser.Physics.ARCADE );
+                
+                cursorkeys = game.input.keyboard.createCursorKeys();
+                
+            }
+            function play() {
+                game.physics.arcade.overlap( vampire, monster, monsterTouchesvampire );
+                
+                if ( cursorkeys.left.isDown ) {
+                    vampire.x -= 10;
+                }
+                if ( cursorkeys.right.isDown ) {
+                    vampire.x += 10; 
+                }
+                if ( cursorkeys.up.isDown ) {
+                    vampire.y -= 10; 
+                }
+                if ( cursorkeys.down.isDown ) {
+                    vampire.y += 10; 
+                }
+                
+            }
+            function monsterTouchesvampire() {
+                myscore = myscore + 5
+                scoreTextObject.setText( myscore.toString() );
+                monster.x = Math.random() * game.width;
+                monster.y = Math.random() * game.height;
+                if ( monster.x > (game.width - 35) ) {
+                    monster.x = game.width - 35;
+                }
+                if ( monster.y > (game.height - 35) ) {
+                    monster.y = game.height - 35;
+                }
+            }
+            
+            /* global Phaser */
+            game = new Phaser.Game(
+                600,
+                500,
+                Phaser.AUTO,
+                null,
+                {
+                    preload: load,
+                    create: initialize,
+                    update: play
+                }
+            );
+            console.log(game);
+        </script>
+        
+    </head>
+    <body>
+
+    </body>
+</html>

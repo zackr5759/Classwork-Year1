@@ -1,0 +1,52 @@
+{"frames": [
+
+{
+	"filename": "BlueBar.png",
+	"frame": {"x":0,"y":0,"w":300,"h":300},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":300,"h":300},
+	"sourceSize": {"w":300,"h":300}
+},
+{
+	"filename": "Bubble.png",
+	"frame": {"x":300,"y":0,"w":102,"h":102},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":102,"h":102},
+	"sourceSize": {"w":102,"h":102}
+},
+{
+	"filename": "Dialog Box.png",
+	"frame": {"x":0,"y":300,"w":400,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":400,"h":100},
+	"sourceSize": {"w":400,"h":100}
+},
+{
+	"filename": "ground.png",
+	"frame": {"x":0,"y":400,"w":512,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":256},
+	"sourceSize": {"w":512,"h":256}
+},
+{
+	"filename": "sky.png",
+	"frame": {"x":0,"y":656,"w":512,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":256},
+	"sourceSize": {"w":512,"h":256}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "fallingWords.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":912},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a1203fbf249ffdbe4b91528cd6b6efde:4ee3c0a09cb60a8b6eb110074f4d7961:0ff773363bd2a26d91a0804009600610$"
+}
+}

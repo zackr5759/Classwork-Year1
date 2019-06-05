@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Game Test</title>
+        <!-- step 1 to use Phaser: load phaser.min.js -->
+        <script src="wordlist.js"></script>
+        <script src="phaser.min.js"></script>
+        <!-- step 2: write your own custom game code using phaser -->
+        <script>
+            // first thing I want to do in Cloud9 is stop the text editor from complaining
+            /* global Phaser */
+            
+            // make an instance of the Game object to make a video game
+            var game = new Phaser.Game(
+                1016, // width
+                702, // height
+                Phaser.AUTO,
+                null,
+                // game state object value
+                {
+                    preload: myPreload,
+                    create: myCreate,
+                    update: myUpdate,
+                    render: myRender
+                }
+            );
+            var tiles;       // group
+            var tilesPlaced; // group
+            var tilesDeleted // group
+            var tilesEntered // group
+            var placedNum = 0;
+            var bubbles;     // group
+            var tileTimer = 0;
+            var setWordNum = 0;
+            var curWord = "";
+            var spelledWords = {};
+            var spelledWordsCount = 0;
+            var gameOver = true;
+            
+            var clickGuard;
+            
+  //          var fixedWord = ["D","I","C","T","I","O","N","A","R","Y"];
+            var sky;
+            var ground;
+            var dialogBox;
+            var sideBox;
+            var sideBoxWords; // Text for spelled words
+            
+            var enterButton;
+            
+            var timeBox;
+            var timeBoxText;   
+            
+            var timeMax = 9000;
+            var time = timeMax;
+            
+            var scoreBox;
+            var scoreBoxText;
+            var score = 0;
+            var highscore = 0;
+            
+            var resultsBox;
+            var resultsBoxText;
+            var boxUp=true;
+            
+            var letters = ["E","T","A","O","I","N","S","R","H","D","L","U","C",
+                                "M","F","Y","W","G","P","B","V","K","X","Q","J","Z"];
+                                
+            var backspaceDown = false;
+            var enterDown = false;
+            
+            var letterCount = [];
+            for (var i=0;i<26;i++){
+                letterCount[i]=0;
+            }
+            
+            var music;
+            var sfxCorrect;
+            var sfxNotAWord;
+            var sfxDelete;
+            var sfxSelect;
+            
+            
+	  
+            var prob = [1202,910,812,768,731,695,628,602,592,432,398,288,271,
+                            261,230,211,209,203,182,149,111,69,17,11,10,7];
+                            
+            var values = [1,3,3,2,1,4,2,4,1,8,5,
+                          1,3,1,1,3,10,1,1,1,1,4,
+                          4,8,4,10]
+            
+            // block of code for preload state
+            function myPreload() {
+                
+                function nextChar(c) {
+                    return String.fromCharCode(c.charCodeAt(0) + 1);
+                }
+
+            game.load.atlas('background', 'img/fallingWords.png','img/fallingWords.json');
+            game.load.image('dialogBox','img/dialogBox.png');
+
+
+
+            for (var i='A';i<='Z';i=nextChar(i)){
+                    console.log(i);
+                    game.load.image(i,'img/'+i+'.png');
+                }
+                
+            game.load.audio('BGM', 'audio/BGM_1-90bpm_01.mp3');
+            game.load.audio('correctWord', 'audio/correct_word_v1_01.mp3');
+            game.load.audio('notAWord', 'audio/not_a_word_v1_01.mp3');
+            game.load.audio('deleteTile', 'audio/delete_tile_v1_01.mp3');
+            game.load.audio('selectTile', 'audio/select_tile_v1_01.mp3');
+            
+            }
+            
+
+            
+            // block of code for create state
+            function myCreate() {
+                
+                music = game.add.audio('BGM');
+                sfxCorrect = game.add.audio('correctWord');
+                sfxNotAWord = game.add.audio('notAWord');
+                sfxDelete = game.add.audio('deleteTile');
+                sfxSelect = game.add.audio('selectTile');
+
+                sky = game.add.sprite(0,0,'background','sky.png');
+                ground = game.add.sprite(0,358,'background','ground.png');
+                
+                game.physics.startSystem (Phaser.Physics.ARCADE );
+                
+                
+                tiles = game.add.group();
+                tiles.enableBody = true;
+                tiles.physicsBodyType = Phaser.Physics.ARCADE;
+
+                dialogBox = game.add.sprite(0,614,'dialogBox');
+
+                timeBox = game.add.sprite(816,0,'dialogBox');
+                
+                timeBox.height = 50;
+                timeBox.width = 200;
+                
+                scoreBox = game.add.sprite(816,50,'dialogBox');
+                
+                scoreBox.height = 50;
+                scoreBox.width = 200;
+
+                
+                sideBox = game.add.sprite(1016,100,'dialogBox');
+                
+                
+                sideBox.anchor.setTo(0,0);
+                sideBox.angle +=90;
+                sideBox.height = 200;
+                sideBox.width = 502;
+                
+                enterButton = game.add.sprite(1016,602,'dialogBox');
+                
+                
+                enterButton.anchor.setTo(0,0);
+                enterButton.angle +=90;
+                enterButton.height = 200;
+                enterButton.width = 100;            
+                enterButton.tint = 0xC08844;
+                
+                
+                resultsBox = game.add.sprite(300,200,'dialogBox');
+                resultsBox.height = 300;
+                resultsBox.alpha = 0;
+
+                resultsBoxText = game.add.text(
+                    360,
+                    270,
+                    "",
+                    {
+                        font: "45px Arial",
+                        fill: "black",
+                    }
+                );
+                
+                sideBoxWords = game.add.text(
+                    840,
+                    140,
+                    "",
+                    {
+                        font: "27px Consolas",
+                        fill: "black",
+                    }
+                );
+
+                timeBoxText = game.add.text(
+                    830,
+                    10,
+                    "TIME: ",
+                    {
+                        font: "30px Consolas",
+                        fill: "black",
+                    }
+                );
+                
+                scoreBoxText = game.add.text(
+                    830,
+                    63,
+                    "SCORE: 0",
+                    {
+                        font: "25px Consolas",
+                        fill: "black",
+                    }
+                );
+                
+
+                
+                
+                tilesPlaced = game.add.group();
+                
+                tilesDeleted = game.add.group();
+                tilesDeleted.enableBody = true;
+                tilesDeleted.physicsBodyType = Phaser.Physics.ARCADE;
+                
+                tilesEntered = game.add.group();
+                tilesEntered.enableBody = true;
+                tilesEntered.physicsBodyType = Phaser.Physics.ARCADE;                
+                
+                bubbles = game.add.group();
+                bubbles.enableBody = true;
+                bubbles.physicsBodyType = Phaser.Physics.ARCADE;
+                
+                for (var i=0;i<5;i++){
+                    var curBubble = bubbles.create(30.6+163.2*i,512,'background','Bubble.png');
+                    curBubble.width = 102;
+                    curBubble.height = 102;
+                    console.log("Test")
+                    console.log(curBubble);
+                }
+                sky.width = 1016;
+                sky.height = 358;
+                
+                ground.width = 1016;
+                ground.height+=100;
+                dialogBox.width = 816;
+                
+                resultsBox.alpha = 1;
+                resultsBoxText.setText("Click the green\nbutton to start");
+
+                
+
+     /*           for (var i=0;i<2;i++){
+                    for (var j=0;j<5;j++){
+                        var curLetter = getRandomLetter();
+                        while (letterCount[curLetter]>=2){
+                            curLetter = getRandomLetter();
+                        }
+                        letterCount[curLetter]++;
+                        tiles.create(30.6+163.2*j,102*i,letters[curLetter]);
+                    }
+                }  */
+                
+            music.play('',0,2,true);
+            
+            }
+            
+            function myUpdate() 
+            {
+                
+  //               sideBoxWords.setText(spelledWords.length);
+  //              for (var i=0;i<spelledWords.length;i++){
+   //                 sideBoxWords.setText(spelledWords[i]+"\n");
+  //              }
+  
+                var k = game.input.keyboard;
+                
+                if (gameOver==false){
+
+                
+                
+                if(k.isDown(48) && backspaceDown==false){ // 0 pressed (Deleted by keyboard)
+                    backspaceDown=true;
+                    changeScore(-2);
+                    if (placedNum>0){
+                        var thisTile = tilesPlaced.children[placedNum-1];
+                        deleteTile(thisTile); 
+                        sfxDelete.play();
+                        placedNum--;
+                        curWord = curWord.substring(0, curWord.length - 1);
+                    }
+                }
+                else if (k.isDown(48)){
+                    backspaceDown=true;
+                }
+                else {
+                    backspaceDown=false;
+                }
+                
+                if (k.isDown(13) && enterDown==false){ // Enter pressed (Entering words by keyboard)
+                    enterDown=true;
+                    if (checkWord(curWord)==true){
+                   //     tilesPlaced.forEach(enterTile);
+                        tilesPlaced.destroy();
+                        tilesPlaced = game.add.group();
+                        placedNum=0;
+                        spelledWords[spelledWords.length]=curWord;
+                        spelledWordsCount++;
+                        sideBoxWords.setText(sideBoxWords.text+curWord+"\n");
+                        changeScore(getValue(curWord));
+                        curWord="";
+                        sfxCorrect.play();
+                    }
+                    else if (curWord.length>0){
+                        changeScore(-1);
+                        sfxNotAWord.play();
+                        }
+                }
+                else if (k.isDown(13)){
+                    enterDown = true;
+                }
+                else {
+                    enterDown = false;
+                }
+                
+                
+                game.physics.arcade.overlap(tiles, bubbles, checkInput );
+	  
+	  
+	  
+
+	            
+                clickGuard = false;
+                tiles.callAll('events.onInputDown.add', 'events.onInputDown', checkClick);
+            
+
+                tilesPlaced.callAll('events.onInputDown.add', 'events.onInputDown', checkClickPlaced);
+
+                
+                enterButton.inputEnabled = true;
+                enterButton.events.onInputDown.add(checkClickEnter, this);
+                
+
+                
+
+                
+
+
+                
+  /*              if (tileTimer == 0 && setWordNum < fixedWord.length) {
+                    var curTile = tiles.create(30.6+163.2*Math.floor(Math.random()*5),-100,fixedWord[setWordNum++]);
+                    curTile.body.acceleration.y = 110;
+                    tileTimer = 80;
+                }
+                else {
+                    tileTimer--;
+                } */
+                
+                if (tileTimer == 0) {
+                    var letter = letters[getRandomLetter()];
+                    console.log(letter);
+                    var curTile = tiles.create(game.rnd.integerInRange(0,4)*163.2+30.6,-102,letter);
+                    curTile.body.velocity.y =50;
+                    curTile.body.acceleration.y =300;
+                    curTile.inputEnabled = true;
+                    tileTimer = 20;
+                }
+                else {
+                    tileTimer--;
+                }        
+                
+                timeBoxText.setText("TIME: "+ --time);
+                
+                if (time<=0){
+                    gameOver=true;
+                }
+                if (spelledWordsCount>=13){
+                    gameOver=true;
+                    changeScore(4*Math.floor(time/100));
+                }
+                }
+                else {
+                enterButton.inputEnabled = true;
+                enterButton.events.onInputDown.add(resetGame, this);                    
+                }
+
+                tiles.forEachAlive(destroyOffScreen);
+                tilesDeleted.forEachAlive(destroyOffScreen);
+                
+                if (gameOver==true&&boxUp==false){
+                    boxUp=true;
+                    resultsBox.alpha = 1;
+
+                    if (score>highscore){
+                        highscore=score;
+                    }
+                    resultsBoxText.setText("Game Over\nScore: "+score+"\nHigh Score: "+highscore);
+                }
+
+                function resetGame(){
+                    time=timeMax;
+                    gameOver=false;
+                    enterButton.events.onInputDown.remove(resetGame, this);
+                    tiles.forEachAlive(destroyInstant);
+                    tilesPlaced.forEachAlive(destroyInstant);
+                    placedNum=0
+                    curWord="";
+                    score=0;
+                    scoreBoxText.setText("SCORE: 0");
+                    sideBoxWords.setText("");
+                    spelledWords=[];
+                    spelledWordsCount=0;
+                    boxUp=false;
+                    resultsBox.alpha=0;
+                    resultsBoxText.setText("");
+                }
+
+                function checkClick(tile){ // Letter entered by click/touch
+                    if (tile.y>512-102 && clickGuard==false && placedNum<10 && time>0 ){
+                            clickGuard = true;
+                            var tilePlaced = tilesPlaced.create(36+74*placedNum,625,tile.key);
+                            tilePlaced.width = 74;
+                            tilePlaced.height = 74;
+                            curWord += tile.key;
+                            sfxSelect.play();
+                            tile.kill();
+                            tilePlaced.inputEnabled = true;
+                            placedNum++;
+                            
+                            console.log(curWord);
+                    }
+                }
+                
+                                
+	            function checkInput(tile, bubble){ // Letter entered by keyboard
+	                if (tile.x==bubble.x && placedNum<10 && time>0){
+	                    var lane = (tile.x-30.6)/163.2;
+                        if (k.isDown(49+lane)){
+                            var tilePlaced = tilesPlaced.create(36+74*placedNum,625,tile.key);
+                            tilePlaced.width = 74;
+                            tilePlaced.height = 74;
+                            curWord += tile.key;
+                            sfxSelect.play();
+                            tile.kill();
+                            tilePlaced.inputEnabled = true;
+                            placedNum++;
+                            
+                            console.log(curWord);
+                            
+                        }
+	                }
+	            } 
+	            
+                function checkClickPlaced(tile){ // Delete letters by click/touch
+                    if (clickGuard==false){
+                        clickGuard = true;
+                        var clickNum = (tile.x-36)/74;
+                        console.log("Clicks tile x-pos: "+tile.x);
+                        console.log("Clicked lane #: "+clickNum);
+                        for (var i=placedNum-1;i>=clickNum;i--){
+                            var curTile = tilesPlaced.children[i];
+                            deleteTile(curTile);
+                            sfxDelete.play();
+                            curWord = curWord.substring(0, curWord.length - 1);
+                            changeScore(-2);
+                            placedNum--;
+                        }                        
+                    }
+                }      
+                
+                function checkClickEnter(){ // Enter words by click/touch
+                    if (clickGuard==false){
+                        clickGuard=true;
+                        var startTime = Date.now();
+                        console.log(Date.now());
+                        if (checkWord(curWord)==true){ //Success
+                   //     tilesPlaced.forEach(enterTile);
+                            tilesPlaced.destroy();
+                            tilesPlaced = game.add.group();
+                            placedNum=0;
+                            spelledWords[spelledWords.length]=curWord;
+                            spelledWordsCount++;
+                            sideBoxWords.setText(sideBoxWords.text+curWord+"\n");
+                            changeScore(getValue(curWord));
+                            curWord="";
+                            sfxCorrect.play();
+                        }
+                    else if (curWord.length>0){ // Failure
+                        changeScore(-1);
+                        sfxNotAWord.play();
+                        }     
+                    console.log(Date.now());    
+                    }
+                    
+                }                
+                
+                function destroyOffScreen(tile){ // Destroy tiles once they are offscreen
+                    if(tile.y>702){
+                        tile.destroy();
+                    }
+                }
+                
+                function destroyInstant(tile){ // Just destroys tile w/o conditional
+                    tile.destroy();
+                }
+                
+                  function getRandomLetter(){ // Returns # of letter (index of letter array)
+                    var randNum = Math.floor(Math.random()*10000);
+                    var total = 0;
+        
+                    for (var i=0;i<=25;i++){
+                        total += prob[i];
+                        if (randNum<total){
+                            var letter = letters[i];
+                            break;
+                        }
+                    }
+                    return i;
+                }
+                
+     //           function checkWord(word){ // Goes through entire word list & returns true if found
+     //              for (var i=0;i<words.length;i++){
+    //                      if (word==words[i]){
+     //                     if (binarySearch(words,word)!=-1){
+    //                        return true;
+     //                   }
+    //                }
+   //                 return false;
+   //             }
+   //             }
+                
+                function checkWord (x){
+         //           var startTime = performance.now();
+
+                    let start=0, end=words.length-1;
+                    
+                    while (start<=end){
+                        let mid=Math.floor((start+end)/2);
+                        
+                        if (words[mid]===x) {
+        //                    console.log(performance.now()-startTime);
+                            return true;
+                        }
+                        else if (words[mid] <x)
+                            start = mid + 1;
+                        else
+                            end = mid - 1;
+                    }
+         //           console.log(performance.now()-startTime);
+                    return false;
+                    
+                }
+                
+                function changeScore(amount){ // Increase/decrease score & update text box
+                    score += amount;
+                    if (score<0){
+                        score=0
+                    }
+                    scoreBoxText.setText("SCORE: "+score); 
+                }
+                
+                function getValue(word){ // Calculates the value of a word (based on sum of letter values & its length)
+                    var total = 0;
+                    for (var i=0; i<word.length;i++){
+                        total += values[word.charCodeAt(i)-65];
+                    }
+                    return Math.floor(Math.pow(total,word.length/3)); // Value = [sum(tiles)]^(length/3)
+                }
+                
+                function deleteTile(tile){ // Cause placed tile to drop from screen
+                    var delTile = tilesDeleted.create(tile.x, tile.y, tile.key);
+                    tile.destroy();
+                    delTile.width = 74;
+                    delTile.height = 74;
+                    delTile.body.velocity.y = 500;
+                }
+                
+            }
+            
+
+            
+            function myRender() {
+       //         game.debug.physicsGroup(tiles, '#FF0000', true, true);
+            }
+            
+      </script>
+    </head>
+</html>
