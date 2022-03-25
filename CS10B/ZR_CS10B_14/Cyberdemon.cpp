@@ -13,11 +13,6 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
-
 	Cyberdemon::Cyberdemon(const int& newStrength,
 		const int& newHitpoints)
 
@@ -28,10 +23,6 @@ namespace cs_creatures {
 		creature::setStrength(newStrength);
 		creature::setHitpoints(newHitpoints);
 	}
-
-
-
-
 
 	string Cyberdemon::getSpecies()
 	{

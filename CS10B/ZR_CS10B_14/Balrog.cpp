@@ -13,11 +13,6 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
-
 	Balrog::Balrog(const int& newStrength,
 		const int& newHitpoints)
 
@@ -29,18 +24,10 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
 	string Balrog::getSpecies()
 	{
 		return "Balrog";
 	}
-
-
-
-
 
 	int Balrog::getDamage()
 	{
@@ -52,6 +39,5 @@ namespace cs_creatures {
 		damage += damage2;
 		return damage;
 	}
-
 
 }

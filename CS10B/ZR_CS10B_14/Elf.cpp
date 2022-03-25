@@ -13,11 +13,6 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
-
 	Elf::Elf(const int& newStrength,
 		const int& newHitpoints)
 
@@ -29,19 +24,11 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
 	string Elf::getSpecies()
 	{
 		return "Elf";
 	}
-
-
-
-
-
+	
 	int Elf::getDamage()
 	{
 		int damage = creature::getDamage();

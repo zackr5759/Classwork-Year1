@@ -13,11 +13,6 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
-
 	Human::Human(const int& newStrength,
 			const int& newHitpoints)
 
@@ -29,14 +24,8 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
 	string Human::getSpecies() 
 	{ 
 		return "Human";
 	}
-
-
 }

@@ -244,31 +244,12 @@
                 resultsBox.alpha = 1;
                 resultsBoxText.setText("Click the green\nbutton to start");
 
-                
-
-     /*           for (var i=0;i<2;i++){
-                    for (var j=0;j<5;j++){
-                        var curLetter = getRandomLetter();
-                        while (letterCount[curLetter]>=2){
-                            curLetter = getRandomLetter();
-                        }
-                        letterCount[curLetter]++;
-                        tiles.create(30.6+163.2*j,102*i,letters[curLetter]);
-                    }
-                }  */
-                
             music.play('',0,2,true);
             
             }
             
             function myUpdate() 
             {
-                
-  //               sideBoxWords.setText(spelledWords.length);
-  //              for (var i=0;i<spelledWords.length;i++){
-   //                 sideBoxWords.setText(spelledWords[i]+"\n");
-  //              }
-  
                 var k = game.input.keyboard;
                 
                 if (gameOver==false){
@@ -335,22 +316,6 @@
                 
                 enterButton.inputEnabled = true;
                 enterButton.events.onInputDown.add(checkClickEnter, this);
-                
-
-                
-
-                
-
-
-                
-  /*              if (tileTimer == 0 && setWordNum < fixedWord.length) {
-                    var curTile = tiles.create(30.6+163.2*Math.floor(Math.random()*5),-100,fixedWord[setWordNum++]);
-                    curTile.body.acceleration.y = 110;
-                    tileTimer = 80;
-                }
-                else {
-                    tileTimer--;
-                } */
                 
                 if (tileTimer == 0) {
                     var letter = letters[getRandomLetter()];
@@ -514,19 +479,7 @@
                     return i;
                 }
                 
-     //           function checkWord(word){ // Goes through entire word list & returns true if found
-     //              for (var i=0;i<words.length;i++){
-    //                      if (word==words[i]){
-     //                     if (binarySearch(words,word)!=-1){
-    //                        return true;
-     //                   }
-    //                }
-   //                 return false;
-   //             }
-   //             }
-                
                 function checkWord (x){
-         //           var startTime = performance.now();
 
                     let start=0, end=words.length-1;
                     
@@ -534,7 +487,6 @@
                         let mid=Math.floor((start+end)/2);
                         
                         if (words[mid]===x) {
-        //                    console.log(performance.now()-startTime);
                             return true;
                         }
                         else if (words[mid] <x)
@@ -542,7 +494,6 @@
                         else
                             end = mid - 1;
                     }
-         //           console.log(performance.now()-startTime);
                     return false;
                     
                 }

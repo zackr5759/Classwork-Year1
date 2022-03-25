@@ -18,7 +18,7 @@ namespace cs_creatures {
 		void setHitpoints(const int newHitpoints);
 		int getStrength();
 		int getHitpoints();
-		virtual std::string getSpecies() = 0;
+		virtual std::string getSpecies();
 
 	private:
 		int strength;           // how much damage this Creature inflicts

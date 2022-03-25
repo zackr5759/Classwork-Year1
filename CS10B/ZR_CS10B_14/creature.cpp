@@ -11,46 +11,26 @@ namespace cs_creatures {
 		hitpoints = 10;
 	}
 
-
-
-
-
 	creature::creature(int newStrength, int newHitpoints)
 	{
 		strength = newStrength;
 		hitpoints = newHitpoints;
 	}
 
-
-
-
-
 	std::string creature::getSpecies()
 	{ 
 		return "Creature";
 	}
-
-
-
-
 
 	int creature::getHitpoints() 
 	{ 
 		return hitpoints;
 	}
 
-
-
-
-
 	int creature::getStrength()
 	{ 
 		return strength;
 	}
-
-
-
-
 
 	int creature::getDamage() 
 	{ 
@@ -59,19 +39,10 @@ namespace cs_creatures {
 		return damage;
 	}
 
-
-
-
-
 	void creature::setStrength(const int newStrength)
 	{
 		strength = newStrength;
 	}
-
-
-
-
-
 
 	void creature::setHitpoints(const int newHitpoints)
 	{

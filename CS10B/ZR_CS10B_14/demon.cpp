@@ -13,11 +13,6 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
-
 	Demon::Demon(const int& newStrength,
 		const int& newHitpoints)
 
@@ -29,18 +24,10 @@ namespace cs_creatures {
 		creature::setHitpoints(newHitpoints);
 	}
 
-
-
-
-
 	string Demon::getSpecies()
 	{
 		return "Demon";
 	}
-
-
-
-
 
 	int Demon::getDamage()
 	{
